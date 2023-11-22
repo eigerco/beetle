@@ -14,8 +14,6 @@ use anyhow::Result;
 use async_trait::async_trait;
 use cid::Cid;
 use handler::{BitswapHandler, HandlerEvent};
-use iroh_metrics::record;
-use iroh_metrics::{bitswap::BitswapMetrics, core::MRecorder, inc};
 use libp2p::connection_limits;
 use libp2p::core::Endpoint;
 use libp2p::swarm::dial_opts::DialOpts;
@@ -297,8 +295,6 @@ impl<S: Store> Bitswap<S> {
     }
 
     fn receive_message(&self, peer: PeerId, message: BitswapMessage) {
-        inc!(BitswapMetrics::MessagesReceived);
-        record!(BitswapMetrics::MessageBytesIn, message.encoded_len() as u64);
         // TODO: Handle backpressure properly
         if let Err(err) = self.incoming_messages.try_send((peer, message)) {
             warn!(
@@ -343,16 +339,11 @@ impl<S: Store> Bitswap<S> {
                     | PeerState::Disconnected
                     | PeerState::Unresponsive => {
                         if old_state.is_connected() {
-                            inc!(BitswapMetrics::DisconnectedPeers);
                             self.peer_disconnected(peer);
                         }
                     }
-                    PeerState::Connected(_) => {
-                        // nothing, just recorded until we receive protocol confirmation
-                        inc!(BitswapMetrics::ConnectedPeers);
-                    }
+                    PeerState::Connected(_) => {}
                     PeerState::Responsive(_, _) => {
-                        inc!(BitswapMetrics::ResponsivePeers);
                         self.peer_connected(peer);
                     }
                 }
@@ -365,14 +356,10 @@ impl<S: Store> Bitswap<S> {
                     PeerState::DialFailure(_)
                     | PeerState::Disconnected
                     | PeerState::Unresponsive => {
-                        inc!(BitswapMetrics::DisconnectedPeers);
                         self.peer_disconnected(peer);
                     }
-                    PeerState::Connected(_) => {
-                        inc!(BitswapMetrics::ConnectedPeers);
-                    }
+                    PeerState::Connected(_) => {}
                     PeerState::Responsive(_, _) => {
-                        inc!(BitswapMetrics::ResponsivePeers);
                         self.peer_connected(peer);
                     }
                 }
@@ -522,7 +509,6 @@ impl<S: Store> NetworkBehaviour for Bitswap<S> {
 
     #[allow(clippy::type_complexity)]
     fn poll(&mut self, cx: &mut Context) -> Poll<ToSwarm<Self::ToSwarm, THandlerInEvent<Self>>> {
-        inc!(BitswapMetrics::NetworkBehaviourActionPollTick);
         // limit work
         for _ in 0..50 {
             match Pin::new(&mut self.network).poll(cx) {

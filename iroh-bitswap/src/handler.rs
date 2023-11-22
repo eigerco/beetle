@@ -11,7 +11,6 @@ use futures::{
     prelude::*,
     stream::{BoxStream, SelectAll},
 };
-use iroh_metrics::{bitswap::BitswapMetrics, core::MRecorder, inc};
 use libp2p::swarm::handler::{ConnectionEvent, FullyNegotiatedInbound};
 use libp2p::swarm::{
     handler::{DialUpgradeError, FullyNegotiatedOutbound},
@@ -237,16 +236,12 @@ impl ConnectionHandler for BitswapHandler {
     }
 
     fn poll(&mut self, cx: &mut Context<'_>) -> Poll<BitswapConnectionHandlerEvent> {
-        inc!(BitswapMetrics::HandlerPollCount);
         if !self.events.is_empty() {
             return Poll::Ready(self.events.remove(0));
         }
 
-        inc!(BitswapMetrics::HandlerPollEventCount);
-
         // Handle any upgrade errors
         if let Some(error) = self.upgrade_errors.pop_front() {
-            inc!(BitswapMetrics::HandlerConnUpgradeErrors);
             return Poll::Ready(ConnectionHandlerEvent::NotifyBehaviour(
                 HandlerEvent::FailedToDialUpgrade { error },
             ));
@@ -254,7 +249,6 @@ impl ConnectionHandler for BitswapHandler {
 
         // determine if we need to create the stream
         if let Some(message) = self.send_queue.pop_front() {
-            inc!(BitswapMetrics::OutboundSubstreamsEvent);
             return Poll::Ready(ConnectionHandlerEvent::OutboundSubstreamRequest {
                 protocol: self.listen_protocol.clone().map_info(|()| message),
             });

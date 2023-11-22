@@ -1,8 +1,6 @@
 [workspace]
 members = [
   "iroh-bitswap",
-  "iroh-metrics",
-  "iroh-util",
 ]
 # even if all crates are set to edition 2021, we still need to force the
 # resolver to 2
@@ -74,8 +72,6 @@ ignore = "0.4.18"
 indicatif = "0.17.1"
 integer-encoding = "3.0"
 iroh-bitswap = { version = "0.2.0", path = "./iroh-bitswap" }
-iroh-metrics = { version = "0.2.0", path = "./iroh-metrics" }
-iroh-util = { version = "0.2.0", path = "./iroh-util" }
 keyed_priority_queue = "0.4.1"
 lazy_static = "1.4"
 libipld = "0.15"
