@@ -2,52 +2,53 @@
 name = "iroh-bitswap"
 authors = ["dignifiedquire <me@dignifiedquire.com>"]
 description = "Implementation of the bitswap protocol"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
-rust-version.workspace = true
+version = "0.2.0"
+edition = "2021"
+license = "Apache-2.0/MIT"
+rust-version = "1.65"
+repository = "https://github.com/n0-computer/iroh"
+
+[workspace]
 
 [build-dependencies]
-prost-build.workspace = true
+prost-build = "0.11.1"
 
 [dependencies]
-ahash.workspace = true
-anyhow.workspace = true
-async-broadcast.workspace = true
-async-channel.workspace = true
-async-trait.workspace = true
-async-stream.workspace = true
-asynchronous-codec.workspace = true
-bytes.workspace = true
-cid.workspace = true
-deadqueue.workspace = true
-derivative.workspace = true
-futures.workspace = true
-keyed_priority_queue.workspace = true
-libp2p = { workspace = true, features = ["ping"] }
-multihash.workspace = true
-names.workspace = true
-num_enum.workspace = true
-once_cell.workspace = true
-prost.workspace = true
-rand.workspace = true
-smallvec.workspace = true
-thiserror.workspace = true
-tokio = { workspace = true, features = ["sync", "rt"] }
-tokio-context.workspace = true
-tokio-stream.workspace = true
-tracing.workspace = true
-unsigned-varint = { workspace = true, features = ["asynchronous_codec"] }
-wasm-timer.workspace = true
+ahash = "0.8"
+anyhow = { version = "1", features = ["backtrace"] }
+async-broadcast = "0.4.1"
+async-channel = "1.7.1"
+async-trait = "0.1.57"
+async-stream = "0.3.3"
+asynchronous-codec = "0.6"
+bytes = "1.1"
+cid = "0.9"
+deadqueue = "0.2.3"
+derivative = "2.2"
+futures = "0.3.24"
+keyed_priority_queue = "0.4.1"
+libp2p = { version = "0.53.1", features = ["ping"] }
+multihash = "0.17"
+names = { version = "0.14.0", default-features = false }
+num_enum = "0.5.7"
+once_cell = "1.15"
+prost = "0.11"
+rand = "0.8.5"
+smallvec = "1.10"
+thiserror = "1"
+tokio = { version = "1", features = ["sync", "rt"] }
+tokio-context = "0.1.3"
+tokio-stream = "0.1.11"
+tracing = "0.1.34"
+unsigned-varint = { version = "0.7.1", features = ["asynchronous_codec"] }
+wasm-timer = "0.2.5"
 
 [dev-dependencies]
-criterion.workspace = true
-libp2p = { workspace = true, features = ["yamux", "noise", "tcp", "tokio"] }
-tokio = { workspace = true, features = ["macros", "net", "rt"] }
-tokio-util = { workspace = true, features = ["compat"] }
-tracing-subscriber = { workspace = true, features = ["env-filter"] }
-
+criterion = "0.4"
+libp2p = { version = "0.53.1", features = ["yamux", "noise", "tcp", "tokio"] }
+tokio = { version = "1", features = ["macros", "net", "rt"] }
+tokio-util = { version = "0.7", features = ["compat"] }
+tracing-subscriber = { version = "0.3.14", features = ["env-filter"] }
 
 [[bench]]
 name = "message"
